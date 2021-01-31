@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build:lsp-website": "TARGET=lsp-website vue-cli-service build && node scripts/convert-lsp-website-html.js",
-    "build:webview": "TARGET=webview vue-cli-service build && node scripts/convert-webview-html.js && node scripts/copy-dist-to-webview.js",
+    "build:lsp-website": "cross-env TARGET=lsp-website vue-cli-service build && node scripts/convert-lsp-website-html.js",
+    "build:webview": "cross-env TARGET=webview vue-cli-service build && node scripts/convert-webview-html.js && node scripts/copy-dist-to-webview.js",
     "lint": "vue-cli-service lint",
     "test": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
@@ -28,10 +28,11 @@
     "@vue/cli-plugin-unit-jest": "^3.0.0-beta.15",
     "@vue/cli-service": "^3.0.0-beta.15",
     "@vue/test-utils": "^1.0.0-beta.16",
+    "cross-env": "^7.0.3",
     "fs-extra": "^6.0.1",
-    "node-sass": "^4.9.0",
     "prettier": "^1.13.6",
-    "sass-loader": "^7.0.1",
+    "sass": "^1.22.10",
+    "sass-loader": "^7.2.0",
     "ts-jest": "^22.4.6",
     "typescript": "^3.0.1",
     "vue-template-compiler": "^2.5.16"
@@ -40,5 +41,8 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "volta": {
+    "node": "12.2.0"
+  }
 }
