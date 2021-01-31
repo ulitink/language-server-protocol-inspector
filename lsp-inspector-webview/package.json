@@ -9,7 +9,7 @@
     "url" : "https://github.com/Microsoft/language-server-protocol-inspector.git"
   },
   "engines": {
-    "vscode": "^1.25.0"
+    "vscode": "^1.49.0"
   },
   "categories": [
     "Other"
@@ -43,12 +43,12 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "vscode": "1.1.18",
     "ws": "^6.0.0"
   },
   "devDependencies": {
-    "@types/node": "^10.5.2",
+    "@types/node": "^12.0.0",
     "@types/ws": "^6.0.0",
-    "typescript": "^2.9.2"
+    "@types/vscode": "^1.49.0",
+    "typescript": "^4.1.3"
   }
 }
