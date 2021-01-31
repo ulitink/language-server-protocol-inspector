@@ -8,7 +8,9 @@
   </a>
 </p>
 
-Try it at https://microsoft.github.io/language-server-protocol/inspector/.
+## Note
+Due to the original project is no longer maintain, i fork it makes the web lsp-inspector worked, and redeploy to my github.io.
+Try it at https://iwanabethatguy.github.io/language-server-protocol-inspector/.
 
 ## Motivation
 
