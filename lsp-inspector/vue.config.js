@@ -1,4 +1,4 @@
-const BASEURL = '/'
+const BASEURL = ''
 // const BASEURL = process.env.TARGET === 'lsp-website' ? '/language-server-protocol/inspector' : '/'
 
 const OUTPUT_DIR =
