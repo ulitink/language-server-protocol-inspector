@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { parseLSPLog, LspItem, MsgKind } from '@/logParser/rawLogParser'
-import { parseJSONLog } from '@/logParser/jsonLogParser';
+import {convertToLspItem, parseJSONLog} from '@/logParser/jsonLogParser';
 
 Vue.use(Vuex)
 
@@ -76,14 +76,38 @@ const store = new Vuex.Store({
       state.activeLogIndex = i
     },
     addLog(state, { name, rawLog }) {
-      state.logs.push({
-        items: parseLSPLog(rawLog),
-        name
-      })
+      try {
+        const items:Array<string> = rawLog.split('\n').filter(item => item !== '')
+        const lspItems = [];
+        for (const item of items) {
+          let date = item.substring(0, 10);
+          let time = item.substring(11, 23);
+          let direction = item.substring(24, 27).trim();
+          try {
+            const obj = JSON.parse(item.substring(28))
+            const timestamp = Date.parse(date + "T" + time + "Z");
+            const ijKind = direction == "OUT" ? 'send-notification' : 'recv-notification';
+            let lspItem = convertToLspItem(obj, timestamp, ijKind);
+            if (lspItem) {
+              lspItems.push(lspItem);
+            }
+          }
+          catch (e) {
+            console.error(e)
+          }
+        }
+        state.logs.push({
+          items: lspItems,
+          name
+        })
+      }
+      catch (e) {
+        console.error(e)
+      }
     },
     appendLog(state, logItem: string) {
       const activeLog = state.logs[state.activeLogIndex]
-      activeLog.items.push(parseJSONLog(logItem))
+      // activeLog.items.push(parseJSONLog(logItem))
     },
     search(state, { nameQuery, paramQuery }) {
       state.nameQuery = nameQuery

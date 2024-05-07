@@ -1,31 +1,55 @@
 import { LspItem, MsgKind } from '@/logParser/rawLogParser'
 
-const HEADER_LENGTH = 21
-
-const idToRequests = {}
+const idToRequestTimestamp = {}
 
 export function parseJSONLog(log: string): LspItem {
-  const item = JSON.parse(log.slice(HEADER_LENGTH))
+  return convertToLspItem(JSON.parse(log))
+}
 
-  if (item.message.id && item.type.startsWith('send')) {
-    idToRequests[item.message.id] = item
+export function convertToLspItem(item: any, timestamp: number, ijKind: string): LspItem {
+  if (!item.command) {
+    return {
+      msg: "[CUSTOM MESSAGE]",
+      msgId: null,
+      msgKind: ijKind,
+      msgType: "[CUSTOM MESSAGE]",
+      msgLatency: null,
+      arg: item,
+      time: new Date(timestamp).toLocaleTimeString(undefined, {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        fractionalSecondDigits: 3
+      }),
+    }
   }
+  if (typeof item.seq === "number" && item.type == 'request') {
+    idToRequestTimestamp[item.seq] = timestamp
+  }
+  const id = item.type == 'request' ? item.seq : item.request_seq;
 
   return {
-    msg: item.message.method,
-    msgId: item.message.id,
+    msg: item.command,
+    msgId: id,
     msgKind: convertMsgType(item.type) as MsgKind,
-    msgType: item.message.method
-      ? item.message.method
-      : idToRequests[item.message.id].message.method,
-    msgLatency: item.type === 'receive-response'
-      ? `${item.timestamp - idToRequests[item.message.id].timestamp}ms`
+    msgType: item.command,
+    msgLatency: item.type === 'response'
+      ? `${timestamp - idToRequestTimestamp[id]}ms`
       : null,
-    arg: item.message,
-    time: new Date(item.timestamp).toLocaleTimeString(),
+    arg: item,
+    time: new Date(timestamp).toLocaleTimeString(undefined, {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      fractionalSecondDigits: 3
+    }),
   }
 }
 
 function convertMsgType(msgType: string) {
-  return msgType.startsWith('receive') ? msgType.replace('receive', 'recv') : msgType
+  return msgType == 'request' ? 'send-request' :
+      msgType == 'response' ? 'recv-response' :
+          msgType
 }
