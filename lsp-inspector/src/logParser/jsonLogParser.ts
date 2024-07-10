@@ -7,6 +7,17 @@ export function parseJSONLog(log: string): LspItem {
 }
 
 export function convertToLspItem(item: any, timestamp: number, ijKind: string): LspItem {
+  if (item.type == "event") {
+    return {
+      msg: item.event,
+      msgId: null,
+      msgKind: ijKind,
+      msgType: item.event,
+      msgLatency: null,
+      arg: item,
+      time: formatTime(timestamp),
+    }
+  }
   if (!item.command) {
     return {
       msg: "[CUSTOM MESSAGE]",
@@ -15,13 +26,7 @@ export function convertToLspItem(item: any, timestamp: number, ijKind: string): 
       msgType: "[CUSTOM MESSAGE]",
       msgLatency: null,
       arg: item,
-      time: new Date(timestamp).toLocaleTimeString(undefined, {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        fractionalSecondDigits: 3
-      }),
+      time: formatTime(timestamp),
     }
   }
   if (typeof item.seq === "number" && item.type == 'request') {
@@ -38,14 +43,18 @@ export function convertToLspItem(item: any, timestamp: number, ijKind: string): 
       ? `${timestamp - idToRequestTimestamp[id]}ms`
       : null,
     arg: item,
-    time: new Date(timestamp).toLocaleTimeString(undefined, {
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      fractionalSecondDigits: 3
-    }),
+    time: formatTime(timestamp),
   }
+}
+
+function formatTime(timestamp: number): string {
+  return new Date(timestamp).toLocaleTimeString(undefined, {
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    fractionalSecondDigits: 3
+  })
 }
 
 function convertMsgType(msgType: string) {
