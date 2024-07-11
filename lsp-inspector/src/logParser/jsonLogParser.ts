@@ -2,9 +2,6 @@ import { LspItem, MsgKind } from '@/logParser/rawLogParser'
 
 const idToRequestTimestamp = {}
 
-export function parseJSONLog(log: string): LspItem {
-  return convertToLspItem(JSON.parse(log))
-}
 
 export function convertToLspItem(item: any, timestamp: number, ijKind: string): LspItem {
   if (item.type == "event") {
@@ -47,7 +44,7 @@ export function convertToLspItem(item: any, timestamp: number, ijKind: string): 
   }
 }
 
-function formatTime(timestamp: number): string {
+export function formatTime(timestamp: number): string {
   return new Date(timestamp).toLocaleTimeString(undefined, {
     hour12: false,
     hour: '2-digit',

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { parseLSPLog, LspItem, MsgKind } from '@/logParser/rawLogParser'
-import {convertToLspItem, parseJSONLog} from '@/logParser/jsonLogParser';
+import { LspItem, MsgKind } from '@/logParser/rawLogParser'
+import {convertToLspItem, formatTime} from '@/logParser/jsonLogParser';
 
 Vue.use(Vuex)
 
@@ -84,12 +84,26 @@ const store = new Vuex.Store({
           let time = item.substring(11, 23);
           let direction = item.substring(24, 27).trim();
           try {
-            const obj = JSON.parse(item.substring(28))
+            let body = item.substring(28);
             const timestamp = Date.parse(date + "T" + time + "Z");
-            const ijKind = direction == "OUT" ? 'send-notification' : 'recv-notification';
-            let lspItem = convertToLspItem(obj, timestamp, ijKind);
-            if (lspItem) {
-              lspItems.push(lspItem);
+            if (direction == "ERR") {
+              lspItems.push({
+                msg: "[ERR]",
+                msgId: null,
+                msgKind: 'recv-notification',
+                msgType: "[ERR]",
+                msgLatency: null,
+                arg: body,
+                time: formatTime(timestamp),
+              })
+            }
+            else {
+              const obj = JSON.parse(body)
+              const ijKind = direction == "OUT" ? 'send-notification' : 'recv-notification';
+              let lspItem = convertToLspItem(obj, timestamp, ijKind);
+              if (lspItem) {
+                lspItems.push(lspItem);
+              }
             }
           }
           catch (e) {
