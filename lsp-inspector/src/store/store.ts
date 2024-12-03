@@ -95,12 +95,13 @@ const store = new Vuex.Store({
                 msgLatency: null,
                 arg: body,
                 time: formatTime(timestamp),
+                timestamp,
               })
             }
             else {
               const obj = JSON.parse(body)
               const ijKind = direction == "OUT" ? 'send-notification' : 'recv-notification';
-              let lspItem = convertToLspItem(obj, timestamp, ijKind);
+              let lspItem = convertToLspItem(obj, timestamp, ijKind, lspItems);
               if (lspItem) {
                 lspItems.push(lspItem);
               }

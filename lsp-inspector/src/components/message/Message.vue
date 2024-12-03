@@ -55,9 +55,11 @@ export default Vue.extend({
       )
     },
     timestampOrLatency() {
-      return this.item.msgKind === 'recv-response' || this.item.msgKind === 'send-response'
-        ? this.item.msgLatency
-        : this.item.time
+      let time = this.item.time;
+      if (this.item.msgKind === 'recv-response' || this.item.msgKind === 'send-response') {
+        time += " (" + this.item.msgLatency + ")";
+      }
+      return time;
     },
     isCurrent() {
       return this.item.msgId === this.$store.state.current

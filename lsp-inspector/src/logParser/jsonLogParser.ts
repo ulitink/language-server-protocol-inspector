@@ -1,9 +1,6 @@
 import { LspItem, MsgKind } from '@/logParser/rawLogParser'
 
-const idToRequestTimestamp = {}
-
-
-export function convertToLspItem(item: any, timestamp: number, ijKind: string): LspItem {
+export function convertToLspItem(item: any, timestamp: number, ijKind: string, prevLspItems: Array<LspItem>): LspItem {
   if (item.type == "event") {
     return {
       msg: item.event,
@@ -13,6 +10,7 @@ export function convertToLspItem(item: any, timestamp: number, ijKind: string): 
       msgLatency: null,
       arg: item,
       time: formatTime(timestamp),
+      timestamp,
     }
   }
   if (!item.command) {
@@ -24,23 +22,35 @@ export function convertToLspItem(item: any, timestamp: number, ijKind: string): 
       msgLatency: null,
       arg: item,
       time: formatTime(timestamp),
+      timestamp,
     }
   }
-  if (typeof item.seq === "number" && item.type == 'request') {
-    idToRequestTimestamp[item.seq] = timestamp
-  }
+
   const id = item.type == 'request' ? item.seq : item.request_seq;
 
+  let latency: string = null;
+  if (item.type === 'response' && timestamp) {
+    for (let i = prevLspItems.length - 1; i >= 0; i--) {
+      let prevLspItem = prevLspItems[i];
+      if (prevLspItem.msgKind.startsWith('recv-')) {
+        latency = `${timestamp - prevLspItem.timestamp}ms \u2191`
+        break
+      }
+      if (prevLspItem.msgId === id) {
+        latency = `${timestamp - prevLspItem.timestamp}ms \u2196`
+        break;
+      }
+    }
+  }
   return {
     msg: item.command,
     msgId: id,
     msgKind: convertMsgType(item.type) as MsgKind,
     msgType: item.command,
-    msgLatency: item.type === 'response'
-      ? `${timestamp - idToRequestTimestamp[id]}ms`
-      : null,
+    msgLatency: latency,
     arg: item,
     time: formatTime(timestamp),
+    timestamp,
   }
 }
 
