@@ -1,6 +1,6 @@
 <template>
-  <span class="msg" :class="[{ current: isCurrent }, item.msgKind]" @mouseover="updateCurrent">
-    <div @click="toggleArg" class="msg-clickable-area">
+  <span class="msg" :class="[{ current: isCurrent }, item.msgKind]" :id="messageId" @mouseover="updateCurrent">
+    <span @click="toggleArg" class="msg-clickable-area">
       <span>
         <font-awesome-icon class="fa-icon" icon="comment" v-if="item.msgKind === 'send-request'" />
         <font-awesome-icon class="fa-icon" icon="comment-alt" v-if="item.msgKind === 'send-notification'" />
@@ -22,7 +22,13 @@
         <font-awesome-icon class="fa-icon" icon="comment-alt" tranform="flip-h" v-if="item.msgKind === 'recv-notification'" />
         <font-awesome-icon class="fa-icon" icon="comment" transform="flip-h" v-if="item.msgKind === 'recv-request'" />
       </span>
-    </div>
+    </span>
+
+    <span class="msg-goto" @click="goToRequestOrResponse">
+        <font-awesome-icon class="fa-icon" icon="arrow-right" v-if="item.msgKind === 'send-request'"/>
+        <font-awesome-icon class="fa-icon" icon="arrow-left" v-if="item.msgKind === 'recv-response'"/>
+    </span>
+
     <message-detail :item="item" v-if="this.expanded" @click="noop"></message-detail>
   </span>
 </template>
@@ -45,8 +51,13 @@ export default Vue.extend({
       expanded: false
     }
   },
-
   computed: {
+    messageId() {
+      if (this.item.msgKind === 'recv-notification' || this.item.msgKind === 'send-notification') {
+        return undefined;
+      }
+      return `${this.item.msgKind}-${this.item.msgId}`;
+    },
     isLeft() {
       return (
         this.item.msgKind === 'send-request' ||
@@ -56,7 +67,7 @@ export default Vue.extend({
     },
     timestampOrLatency() {
       let time = this.item.time;
-      if (this.item.msgKind === 'recv-response' || this.item.msgKind === 'send-response') {
+      if (this.item.msgLatency && this.item.msgKind === 'recv-response' || this.item.msgKind === 'send-response' || this.item.msgKind === 'recv-notification') {
         time += " (" + this.item.msgLatency + ")";
       }
       return time;
@@ -75,6 +86,15 @@ export default Vue.extend({
       } else {
         this.$store.commit('updateCurrent', -1)
       }
+    },
+    goToRequestOrResponse() {
+      const matchingMessageKind = this.item.msgKind === 'send-request' ? 'recv-response' : 'send-request';
+      const messageId = `${matchingMessageKind}-${this.item.msgId}`;
+      const element = document.getElementById(messageId);
+      if (!element) {
+        return;
+      }
+      element.scrollIntoView({ block: 'start', behavior: 'smooth' });
     },
     noop() {}
   }
@@ -96,6 +116,11 @@ export default Vue.extend({
 .msg-timestamp {
   color: #e8a1a1;
   font-size: 11px;
+}
+
+.msg-goto {
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 .send-request,
