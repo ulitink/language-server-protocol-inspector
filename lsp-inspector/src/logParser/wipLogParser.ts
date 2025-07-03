@@ -55,7 +55,7 @@ export default function parseWipLog(input: string): LspItem[] {
       msgType: msgType,
       msgId: msgId,
       arg: args,
-      time: '22:33:19',//formatTime(entry.timestamp),
+      time: formatTime(Number(entry.timestamp)),
       msg: msg,
       msgLatency: latency,
     });
