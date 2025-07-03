@@ -1,9 +1,10 @@
 <template>
   <div class="log-picker">
-    <label for="file">
-      <font-awesome-icon class="fa-icon" icon="upload" />Upload your log
+    <label :for="id">
+      <font-awesome-icon class="fa-icon" :icon="icon" />
+      <slot></slot>
     </label>
-    <input type="file" id="file" @change="handleFiles">
+    <input type="file" :id="id" @change="handleFiles">
   </div>
 </template>
 
@@ -15,17 +16,27 @@ export default Vue.extend({
   components: {
     FontAwesomeIcon
   },
+  props: {
+    id: {
+      type: String,
+      required: true
+    },
+    icon: {
+      type: String,
+      required: true
+    },
+    fileHandler: {
+      type: Function,
+      required: true
+    }
+  },
   methods: {
     handleFiles(e) {
       const reader = new FileReader()
-      const store = this.$store
       const name = e.target.files[0].name
 
       reader.onload = () => {
-        store.commit('addLog', {
-          name,
-          rawLog: reader.result
-        })
+        this.fileHandler(name, reader.result);
       }
 
       reader.readAsText(e.target.files[0])

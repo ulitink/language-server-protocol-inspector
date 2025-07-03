@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { LspItem, MsgKind } from '@/logParser/rawLogParser'
 import {convertToLspItem, formatTime} from '@/logParser/jsonLogParser';
+import parseWipLog from '@/logParser/wipLogParser'
 
 Vue.use(Vuex)
 
@@ -122,6 +123,17 @@ const store = new Vuex.Store({
         })
       }
       catch (e) {
+        console.error(e)
+      }
+    },
+    addDebuggerLog(state, { name, rawLog }) {
+      try {
+        state.logs.push({
+          items: parseWipLog(rawLog),
+          type: 'cdp',
+          name
+        })
+      } catch (e) {
         console.error(e)
       }
     },

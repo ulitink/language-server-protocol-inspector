@@ -115,7 +115,7 @@ function extractMsg(msg: string) {
   }
 }
 
-function isCRLF(input: string) {
+export function isCRLF(input: string) {
   const matches = input.match(/\r\n/)
   return matches && matches.length > 0
 }

@@ -4,7 +4,8 @@
     <div class="logs">
       <log v-for="(log, i) in $store.state.logs" :key="i" :index="i"></log>
     </div>
-    <log-picker/>
+    <log-picker :file-handler="handleLogFile" icon="upload" id="lsp-log">Upload LSP log</log-picker>
+    <log-picker :file-handler="handleWipLogFile" icon="bug" id="wip-log">Upload debugger log</log-picker>
   </div>
 </template>
 
@@ -21,6 +22,20 @@ export default Vue.extend({
     FontAwesomeIcon
   },
   methods: {
+    handleLogFile(name: string, content: string) {
+      const store = this.$store
+      store.commit('addLog', {
+        name,
+        rawLog: content
+      })
+    },
+    handleWipLogFile(name: string, content: string) {
+      const store = this.$store
+      store.commit('addDebuggerLog', {
+        name,
+        rawLog: content
+      })
+    },
     handleFiles(e) {
       const reader = new FileReader()
       const store = this.$store

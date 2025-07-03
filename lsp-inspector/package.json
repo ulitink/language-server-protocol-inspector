@@ -2,7 +2,7 @@
   "name": "lsp-inspector",
   "version": "0.1.0",
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
     "build:lsp-website": "cross-env TARGET=lsp-website vue-cli-service build && node scripts/convert-lsp-website-html.js",
     "lint": "vue-cli-service lint",
     "test": "vue-cli-service test:unit",
