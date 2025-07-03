@@ -14,15 +14,33 @@
 <script lang="ts">
 import Vue from 'vue'
 import hljs from 'highlight.js'
+import { LspItem } from '@/logParser/rawLogParser'
+
+function cdpUrl(item: LspItem): string {
+  const [domain, method] = item.msgType.split('.')
+  const type = item.msgId ? 'method' : 'event';
+  return `https://chromedevtools.github.io/devtools-protocol/tot/${domain}/#${type}-${method}`
+}
+
+function lspUrl(item: LspItem): string {
+  const hash = item.msgType.split('/').join('_')
+  return `https://microsoft.github.io/language-server-protocol/specification#${
+    hash
+  }`
+}
 
 export default Vue.extend({
   props: ['item'],
   computed: {
     msgLink() {
-      const hash = this.item.msgType.split('/').join('_')
-      return `https://microsoft.github.io/language-server-protocol/specification#${
-        hash
-      }`
+      const state = this.$store.state;
+      const activeLogType = state.logs[state.activeLogIndex].type
+
+      if (activeLogType == 'lsp') {
+        return lspUrl(this.item)
+      } else if (activeLogType == 'cdp') {
+        return cdpUrl(this.item)
+      }
     }
   },
   mounted() {

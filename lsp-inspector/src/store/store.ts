@@ -20,6 +20,7 @@ export type KindFilter = 'all' | MsgKind
 
 export interface Log {
   name: string
+  type: 'lsp' | 'cdp'
   items: LspItem[]
 }
 export interface State {
@@ -39,18 +40,21 @@ export interface State {
 
 const emptyLog = {
   name: 'stream',
+  type: 'lsp',
   items: []
 }
 
 const sampleLogItems: LspItem[] = require('./sample.log.json')
 const sampleLog = {
   name: 'sample.log',
+  type: 'lsp',
   items: sampleLogItems
 }
 
 const sampleCSSLogItems = require('./css.log.json')
 const sampleCSSLog = {
   name: 'css.log',
+  type: 'lsp',
   items: sampleCSSLogItems
 }
 
@@ -113,6 +117,7 @@ const store = new Vuex.Store({
         }
         state.logs.push({
           items: lspItems,
+          type: 'lsp',
           name
         })
       }
