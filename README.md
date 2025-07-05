@@ -2,15 +2,11 @@
   <h2 align="center">Language Server Protocol Inspector</h2>
 </p>
 
-<p align="center">
-  <a href="https://travis-ci.org/Microsoft/language-server-protocol-inspector">
-    <img src="https://img.shields.io/travis/Microsoft/language-server-protocol-inspector.svg?style=flat-square">
-  </a>
-</p>
-
 ## Note
-Due to the original project is no longer maintain, i fork it makes the web lsp-inspector worked, and redeploy to my github.io.
-Try it at https://iwanabethatguy.github.io/language-server-protocol-inspector/.
+
+This is a fork of a [fork](https://github.com/IWANABETHATGUY/language-server-protocol-inspector) of [language-server-protocol-inspector](https://github.com/microsoft/language-server-protocol-inspector). It supports language server logs written by JetBrains IDEs. The instance of this viewer is deployed at https://ulitink.github.io/language-server-protocol-inspector/.
+
+The format of supported log files is different from the original TypeScript LS logs format, so they are not supported.
 
 ## Motivation
 
